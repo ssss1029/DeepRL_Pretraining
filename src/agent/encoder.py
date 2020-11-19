@@ -36,7 +36,7 @@ class NormalizeImg(nn.Module):
 
 class PixelEncoder(nn.Module):
 	"""Convolutional encoder of pixel observations"""
-	def __init__(self, obs_shape, feature_dim, num_layers=4, num_filters=32, num_shared_layers=4):
+	def __init__(self, obs_shape, feature_dim, num_layers=4, num_filters=32, num_shared_layers=4, normalize=True):
 		super().__init__()
 		assert len(obs_shape) == 3
 
@@ -44,15 +44,28 @@ class PixelEncoder(nn.Module):
 		self.num_layers = num_layers
 		self.num_shared_layers = num_shared_layers
 
-		self.preprocess = nn.Sequential(
-			CenterCrop(size=84), NormalizeImg()
-		)
+		preprocess_modules = [CenterCrop(size=84)]
+		if normalize:
+			preprocess_modules.append(NormalizeImg())
+		self.preprocess = nn.Sequential(*preprocess_modules)
 
-		self.convs = nn.ModuleList(
-			[nn.Conv2d(obs_shape[0], num_filters, 3, stride=2)]
-		)
+		self.convs = nn.ModuleList([
+			nn.Sequential(
+				nn.Conv2d(obs_shape[0], num_filters, 3, stride=2, groups=3),
+				nn.BatchNorm2d(num_filters)
+			)
+		])
+
 		for i in range(num_layers - 1):
-			self.convs.append(nn.Conv2d(num_filters, num_filters, 3, stride=1))
+			if i < (num_layers - 1) // 2:
+				groups = 3
+			else:
+				groups = 1
+			self.convs.append(nn.Sequential(
+				nn.Conv2d(num_filters, num_filters, 3, stride=1, groups=groups),
+				nn.BatchNorm2d(num_filters)
+			))
+
 
 		out_dim = OUT_DIM[num_layers]
 		self.fc = nn.Linear(num_filters * out_dim * out_dim, self.feature_dim)
@@ -83,17 +96,43 @@ class PixelEncoder(nn.Module):
 		if n is None:
 			n = self.num_layers
 		for i in range(n):
-			tie_weights(src=source.convs[i], trg=self.convs[i])
+			# Tie Convs
+			tie_weights(src=source.convs[i][0], trg=self.convs[i][0])
+			# Tie BNs
+			tie_weights(src=source.convs[i][1], trg=self.convs[i][1])
 
 
 def make_encoder(
-	obs_shape, feature_dim, num_layers, num_filters, num_shared_layers
+	obs_shape, feature_dim, num_layers, num_filters, num_shared_layers, encoder_checkpoint, normalize=True,
 ):
 	assert num_layers in OUT_DIM.keys(), 'invalid number of layers'
+	
 	if num_shared_layers == -1 or num_shared_layers == None:
 		num_shared_layers = num_layers
+
 	assert num_shared_layers <= num_layers and num_shared_layers > 0, \
 		f'invalid number of shared layers, received {num_shared_layers} layers'
-	return PixelEncoder(
-		obs_shape, feature_dim, num_layers, num_filters, num_shared_layers
+	
+	encoder = PixelEncoder(
+		obs_shape, feature_dim, num_layers, num_filters, num_shared_layers, normalize
 	)
+
+	if encoder_checkpoint is not None:
+		# Load checkpoint
+		cleaned_checkpoint = dict()
+		exclude_keys = [
+			'head1.weight', 'head1.bias', 
+			'head2.weight', 'head2.bias', 
+			'head3.weight', 'head3.bias', 
+			'encoder.fc.weight', 'encoder.fc.bias', 
+			'encoder.ln.weight', 'encoder.ln.bias']
+		checkpoint = torch.load(encoder_checkpoint)['state_dict']
+		for k, v in checkpoint.items():
+			if k not in exclude_keys:
+				if k.startswith('encoder.'):
+					k = k[8:]
+				cleaned_checkpoint[k] = v
+		# No strict to ensure we dont't error for not loading fc and ln
+		encoder.load_state_dict(cleaned_checkpoint, strict=False)
+		print(f"Successfully loaded checkpoint {encoder_checkpoint}")
+	return encoder

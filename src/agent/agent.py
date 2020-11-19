@@ -39,6 +39,7 @@ def make_agent(obs_shape, action_shape, args):
         num_shared_layers=args.num_shared_layers,
         num_filters=args.num_filters,
         curl_latent_dim=args.curl_latent_dim,
+        encoder_checkpoint=args.encoder_checkpoint
     )
 
 
@@ -81,13 +82,13 @@ class Actor(nn.Module):
     """MLP actor network."""
     def __init__(
         self, obs_shape, action_shape, hidden_dim,
-        encoder_feature_dim, log_std_min, log_std_max, num_layers, num_filters, num_shared_layers
+        encoder_feature_dim, log_std_min, log_std_max, num_layers, num_filters, num_shared_layers, encoder_checkpoint
     ):
         super().__init__()
 
         self.encoder = make_encoder(
             obs_shape, encoder_feature_dim, num_layers,
-            num_filters, num_shared_layers
+            num_filters, num_shared_layers, encoder_checkpoint
         )
 
         self.log_std_min = log_std_min
@@ -212,13 +213,13 @@ class Critic(nn.Module):
     """Critic network, employes two q-functions."""
     def __init__(
         self, obs_shape, action_shape, hidden_dim,
-        encoder_feature_dim, num_layers, num_filters, num_shared_layers
+        encoder_feature_dim, num_layers, num_filters, num_shared_layers, encoder_checkpoint
     ):
         super().__init__()
 
         self.encoder = make_encoder(
             obs_shape, encoder_feature_dim, num_layers,
-            num_filters, num_shared_layers
+            num_filters, num_shared_layers, encoder_checkpoint
         )
 
         self.Q1 = QFunction(
@@ -274,6 +275,7 @@ class SacSSAgent(object):
         num_shared_layers=4,
         num_filters=32,
         curl_latent_dim=128,
+        encoder_checkpoint=None
     ):
         self.discount = discount
         self.critic_tau = critic_tau
@@ -291,17 +293,17 @@ class SacSSAgent(object):
         self.actor = Actor(
             obs_shape, action_shape, hidden_dim,
             encoder_feature_dim, actor_log_std_min, actor_log_std_max,
-            num_layers, num_filters, num_layers
+            num_layers, num_filters, num_layers, encoder_checkpoint
         ).cuda()
 
         self.critic = Critic(
             obs_shape, action_shape, hidden_dim,
-            encoder_feature_dim, num_layers, num_filters, num_layers
+            encoder_feature_dim, num_layers, num_filters, num_layers, encoder_checkpoint
         ).cuda()
 
         self.critic_target = Critic(
             obs_shape, action_shape, hidden_dim,
-            encoder_feature_dim, num_layers, num_filters, num_layers
+            encoder_feature_dim, num_layers, num_filters, num_layers, encoder_checkpoint
         ).cuda()
 
         self.critic_target.load_state_dict(self.critic.state_dict())
@@ -323,7 +325,7 @@ class SacSSAgent(object):
         if use_rot or use_inv:
             self.ss_encoder = make_encoder(
                 obs_shape, encoder_feature_dim, num_layers,
-                num_filters, num_shared_layers
+                num_filters, num_shared_layers, encoder_checkpoint
             ).cuda()
             self.ss_encoder.copy_conv_weights_from(self.critic.encoder, num_shared_layers)
             

@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+*.pt
+*.pth
+*.pth.tar

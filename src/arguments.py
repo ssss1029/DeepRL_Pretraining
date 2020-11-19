@@ -41,6 +41,7 @@ def parse_args():
 	parser.add_argument('--encoder_feature_dim', default=100, type=int)
 	parser.add_argument('--encoder_lr', default=1e-3, type=float)
 	parser.add_argument('--encoder_tau', default=0.05, type=float)
+	parser.add_argument('--encoder_checkpoint', default=None, type=str)
 
 	# self-supervision
 	parser.add_argument('--use_rot', default=False, action='store_true') # rotation prediction
@@ -64,6 +65,7 @@ def parse_args():
 	parser.add_argument('--work_dir', default=None, type=str)
 	parser.add_argument('--save_model', default=False, action='store_true')
 	parser.add_argument('--save_video', default=False, action='store_true')
+	parser.add_argument('--replay_buffer_size', default=500000, type=int)
 
 	# test
 	parser.add_argument('--pad_checkpoint', default=None, type=str)
