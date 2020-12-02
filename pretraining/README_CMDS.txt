@@ -1,3 +1,0 @@
-CUDA_VISIBLE_DEVICES=0 python3 env_trainer.py walker
-...
-
