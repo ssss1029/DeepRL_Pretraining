@@ -8,7 +8,7 @@ import utils
 import time
 from logger import Logger
 from video import VideoRecorder
-
+torch.set_num_threads(2)
 
 def evaluate(env, agent, video, num_episodes, L, step):
 	"""Evaluate agent"""
@@ -42,6 +42,13 @@ def main(args):
 	)
 
 	utils.make_dir(args.work_dir)
+
+	with open(os.path.join(args.work_dir, 'command.txt'), 'w') as f:
+		import pprint
+		to_print = vars(args)
+		to_print['FILENAME'] = __file__
+		pprint.pprint(to_print, stream=f)
+
 	model_dir = utils.make_dir(os.path.join(args.work_dir, 'model'))
 	video_dir = utils.make_dir(os.path.join(args.work_dir, 'video'))
 	video = VideoRecorder(video_dir if args.save_video else None)

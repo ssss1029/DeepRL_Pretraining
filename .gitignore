@@ -4,3 +4,5 @@ __pycache__/
 *.pt
 *.pth
 *.pth.tar
+
+pretraining/checkpoints/walker/model_*

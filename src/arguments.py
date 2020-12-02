@@ -20,8 +20,8 @@ def parse_args():
 	parser.add_argument('--hidden_dim', default=1024, type=int)
 
 	# eval
-	parser.add_argument('--save_freq', default=100000, type=int)
-	parser.add_argument('--eval_freq', default=100000, type=int)
+	parser.add_argument('--save_freq', default=10000, type=int)
+	parser.add_argument('--eval_freq', default=10000, type=int)
 	parser.add_argument('--eval_episodes', default=10, type=int)
 
 	# critic

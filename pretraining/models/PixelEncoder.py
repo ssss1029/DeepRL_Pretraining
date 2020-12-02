@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision
 
 
 OUT_DIM = {2: 39, 4: 35, 6: 31, 8: 27, 10: 23, 11: 21, 12: 19}
-
 
 def tie_weights(src, trg):
 	assert type(src) == type(trg)
@@ -60,10 +60,12 @@ class PixelEncoder(nn.Module):
 		for i in range(num_layers - 1):
 			if i < (num_layers - 1) // 2:
 				groups = 3
+				k = 3
 			else:
-				groups = 1
+				groups = 3
+				k = 3
 			self.convs.append(nn.Sequential(
-				nn.Conv2d(num_filters, num_filters, 3, stride=1, groups=groups),
+				nn.Conv2d(num_filters, num_filters, kernel_size=k, stride=1, groups=groups),
 				nn.BatchNorm2d(num_filters)
 			))
 			
@@ -86,8 +88,8 @@ class PixelEncoder(nn.Module):
 
 	def forward(self, obs, detach=False):
 		h = self.forward_conv(obs, detach)
-		h_fc = self.fc(h)
-		out = h_fc
+		out = h
+		# h_fc = self.fc(h)
 		# h_norm = self.ln(h_fc)
 		# out = torch.tanh(h_norm)
 
@@ -128,19 +130,31 @@ class Classifier(nn.Module):
 		super(Classifier, self).__init__()
 
 		self.num_classes = num_classes
-
+		enc_out_dim = 21 * 21 * 96
 		self.encoder = make_encoder(
 			obs_shape=(9, 84, 84),
-			feature_dim=500,
+			feature_dim=enc_out_dim,
 			num_layers=11,
-			num_filters=90,
+			num_filters=96,
 			num_shared_layers=8,
 			normalize=False
 		)
 
-		self.head1 = nn.Linear(500, num_classes)
-		self.head2 = nn.Linear(500, num_classes)
-		self.head3 = nn.Linear(500, num_classes)
+		self.head1 = nn.Sequential(
+			nn.Linear(enc_out_dim, 1024),
+			nn.ReLU(),
+			nn.Linear(1024, num_classes)
+		)
+		self.head2 = nn.Sequential(
+			nn.Linear(enc_out_dim, 1024),
+			nn.ReLU(),
+			nn.Linear(1024, num_classes)
+		)
+		self.head3 = nn.Sequential(
+			nn.Linear(enc_out_dim, 1024),
+			nn.ReLU(),
+			nn.Linear(1024, num_classes)
+		)
 
 	def forward(self, x, targets=None):
 		"""
@@ -155,6 +169,11 @@ class Classifier(nn.Module):
 		x = torch.split(x, B // 3)
 		assert len(x) == 3
 		x = torch.cat(x, dim=1)
+
+		# torchvision.utils.save_image(x[0, 0:3].unsqueeze(0), "checkpoints/TEMP/1.png")
+		# torchvision.utils.save_image(x[0, 3:6].unsqueeze(0), "checkpoints/TEMP/2.png")
+		# torchvision.utils.save_image(x[0, 6:9].unsqueeze(0), "checkpoints/TEMP/3.png")
+		# print(x.shape)
 
 		h = self.encoder(x)
 
@@ -297,5 +316,6 @@ if __name__ == "__main__":
 
 
 	model = Classifier(num_classes=100).cuda()
-	summary(model, batch_size=3, input_size=(3, 84, 84))
+	print(model)
+	# summary(model, batch_size=3, input_size=(3, 84, 84))
 

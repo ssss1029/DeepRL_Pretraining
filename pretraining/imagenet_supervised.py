@@ -170,14 +170,14 @@ def main_worker(args):
         ImageNetSubsetDataset(traindir,transforms.Compose([
             transforms.Resize(100),
             transforms.RandomCrop(84),
-            transforms.RandomHorizontalFlip(),
+            # transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             # normalize,
         ])), 
         batch_size=args.batch_size, 
         shuffle=True,
         num_workers=args.workers, 
-        pin_memory=True, 
+        pin_memory=False, 
         drop_last=True
     )
 
@@ -191,7 +191,7 @@ def main_worker(args):
         batch_size=args.batch_size, 
         shuffle=False,
         num_workers=args.workers, 
-        pin_memory=True,
+        pin_memory=False,
         drop_last=True
     )
 
@@ -249,13 +249,14 @@ def main_worker(args):
                 val_losses_avg, val_top1_avg, val_top5_avg
             ))
 
-        save_checkpoint({
-            'epoch': epoch + 1,
-            'arch': args.arch,
-            'state_dict': model.state_dict(),
-            'best_acc1': best_acc1,
-            'optimizer' : optimizer.state_dict(),
-        })
+        if epoch % 100 == 0:
+            print("Saving model...")
+            save_checkpoint({
+                'epoch': epoch + 1,
+                'arch': args.arch,
+                'state_dict': model.state_dict(),
+                'best_acc1': best_acc1,
+            })
 
 
 # Useful for undoing the torchvision.transforms.Normalize() 
@@ -320,10 +321,10 @@ def train(train_loader, model, criterion, optimizer, scheduler, epoch, args):
                 bx_auged = bx_auged.reshape((noise2net_batch_size, 3, 224, 224))
                 bx[:noise2net_batch_size] = bx_auged
 
+        logits, loss = model(bx, by)
+
         # torchvision.utils.save_image(bx[:5].detach().clone(), os.path.join(args.save, "example.png"))
         # exit()
-
-        logits, loss = model(bx, by)
 
         # measure accuracy and record loss
         acc1, acc5 = accuracy(logits, by, topk=(1, 5))

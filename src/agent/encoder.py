@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
 
 
 OUT_DIM = {2: 39, 4: 35, 6: 31, 8: 27, 10: 23, 11: 21, 12: 19}
-
 
 def tie_weights(src, trg):
 	assert type(src) == type(trg)
@@ -59,10 +60,12 @@ class PixelEncoder(nn.Module):
 		for i in range(num_layers - 1):
 			if i < (num_layers - 1) // 2:
 				groups = 3
+				k = 3
 			else:
 				groups = 1
+				k = 3
 			self.convs.append(nn.Sequential(
-				nn.Conv2d(num_filters, num_filters, 3, stride=1, groups=groups),
+				nn.Conv2d(num_filters, num_filters, kernel_size=k, stride=1, groups=groups),
 				nn.BatchNorm2d(num_filters)
 			))
 
@@ -118,21 +121,45 @@ def make_encoder(
 	)
 
 	if encoder_checkpoint is not None:
-		# Load checkpoint
-		cleaned_checkpoint = dict()
-		exclude_keys = [
-			'head1.weight', 'head1.bias', 
-			'head2.weight', 'head2.bias', 
-			'head3.weight', 'head3.bias', 
-			'encoder.fc.weight', 'encoder.fc.bias', 
-			'encoder.ln.weight', 'encoder.ln.bias']
-		checkpoint = torch.load(encoder_checkpoint)['state_dict']
-		for k, v in checkpoint.items():
-			if k not in exclude_keys:
-				if k.startswith('encoder.'):
-					k = k[8:]
-				cleaned_checkpoint[k] = v
+		cleaned_checkpoint = get_state_dict_saurav(encoder_checkpoint)
+
 		# No strict to ensure we dont't error for not loading fc and ln
 		encoder.load_state_dict(cleaned_checkpoint, strict=False)
 		print(f"Successfully loaded checkpoint {encoder_checkpoint}")
 	return encoder
+
+def get_state_dict_saurav(encoder_checkpoint: str):
+	cleaned_checkpoint = dict()
+	exclude_keys = [
+		'head1.weight', 'head1.bias', 
+		'head2.weight', 'head2.bias', 
+		'head3.weight', 'head3.bias', 
+		'encoder.fc.weight', 'encoder.fc.bias', 
+		'encoder.ln.weight', 'encoder.ln.bias']
+	checkpoint = torch.load(encoder_checkpoint)['state_dict']
+	for k, v in checkpoint.items():
+		if k not in exclude_keys:
+			if k.startswith('encoder.'):
+				k = k[8:]
+			cleaned_checkpoint[k] = v
+	return cleaned_checkpoint
+
+
+def get_state_dict_sam(encoder_checkpoint: str):
+	"""
+	Get the state dict from Sam's original saved checkpoints
+	"""
+	cleaned_checkpoint = dict()
+	exclude_keys = [
+		'fc1.weight', 'fc1.bias',
+		'ln1.weight', 'ln1.bias',
+		'fc2.weight', 'fc2.bias',
+		'ln2.weight', 'ln2.bias',
+		'output.weight','output.bias'
+	]
+	checkpoint = torch.load(encoder_checkpoint)
+	for k, v in checkpoint.items():
+		if k not in exclude_keys:
+			cleaned_checkpoint[k] = v
+
+	return cleaned_checkpoint
