@@ -1,6 +1,15 @@
+print("Imports starting...")
 from env.wrappers import make_pad_env
 import numpy as np
 from tqdm import tqdm
+print("Imports done!")
+import sys
+
+assert len(sys.argv) == 5, "Specify env, task, num_data_pairs, reset_horizon."
+
+env_name, task_name, num_data_pairs, reset_horizon = sys.argv[1:]
+
+assert env_name in ['walker', 'cheetah', 'reacher'], "Invalid environment."
 
 def get_env_dataset(env_name, task_name, num_data_pairs, reset_horizon):
     i = reset_horizon
@@ -13,7 +22,7 @@ def get_env_dataset(env_name, task_name, num_data_pairs, reset_horizon):
         next_obs, _, done, _ = env.step(action)
         data = (curr_obs, action, next_obs)
         curr_obs = next_obs
-        np.save("/data/sauravkadavath/DeepRL_Pretraining_data/{}/{}".format(env_name, data_num), data)
+        np.save("/mnt/EnvData/{}/{}.npy".format(env_name, data_num), data)
         i = i + 1 if not done else reset_horizon
 
-get_env_dataset('walker', 'walk', 200000, 100)
+get_env_dataset(env_name, task_name, int(num_data_pairs), int(reset_horizon))

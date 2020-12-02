@@ -5,11 +5,15 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import numpy as np
 from torch.utils.data import DataLoader, Dataset
+import sys
 
-ENV = 'walker'
+assert len(sys.argv) == 2, "Specify environment."
+ENV = sys.argv[1]
+assert ENV in ['walker', 'cheetah', 'reacher'], "Invalid envrionment."
+
 env_to_action_dim = {
 	'walker' : 6,
-	'reacher' : 6,
+	'reacher' : 2,
 	'cheetah' : 6,
 }
 
@@ -108,7 +112,7 @@ class PixelEncoder(nn.Module):
 model = PixelEncoder((9,100,100), env_to_action_dim[ENV]).to(device)
 
 # DATA STUFF
-data_dir = '/data/sauravkadavath/DeepRL_Pretraining_data/{}/'.format(ENV)
+data_dir = '/mnt/EnvData/{}/'.format(ENV)
 
 class EnvDataset(Dataset):
 	"""Env dataset."""
@@ -139,7 +143,7 @@ test_loader = DataLoader(env_dataset_test, batch_size=128, shuffle=False, num_wo
 # TRAINING
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters())
-epochs = 100
+epochs = 30
 print("Starting Training!")
 for epoch in range(1, epochs + 1):	# loop over the dataset multiple times
 	running_loss = 0.0
@@ -176,8 +180,8 @@ for epoch in range(1, epochs + 1):	# loop over the dataset multiple times
 
 	print('epoch: {}\ttrain loss: {}\ttest loss: {}'.format(epoch, running_loss / i, running_test_loss / j))
 
-	if epoch % 10 == 0:
-		torch.save(model.state_dict(), "/accounts/projects/jsteinhardt/sauravkadavath/DeepRL_Pretraining/pretraining/checkpoints/{}/model_{}_{}_{}".format(ENV, epoch, running_loss / i, running_test_loss / j))
+	if epoch % 5 == 0:
+		torch.save(model.state_dict(), "/home/saurav/sam/DeepRL_Pretraining/pretraining/ik_checkpoints/{}/model_{}_{}_{}.pth".format(ENV, epoch, running_loss / i, running_test_loss / j))
 
 print('Finished Training!')
 
