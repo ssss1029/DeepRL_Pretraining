@@ -20,7 +20,7 @@ class CenterCrop(nn.Module):
 		self.size = size
 
 	def forward(self, x):
-		assert x.ndim == 4, 'input must be a 4D tensor'
+		assert len(x.shape) == 4, 'input must be a 4D tensor'
 		if x.size(2) == self.size and x.size(3) == self.size:
 			return x
 		elif x.size(-1) == 100:
