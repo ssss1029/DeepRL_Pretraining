@@ -20,7 +20,7 @@ class CenterCrop(nn.Module):
 		self.size = size
 
 	def forward(self, x):
-		assert x.ndim == 4, 'input must be a 4D tensor'
+		assert len(x.shape) == 4, 'input must be a 4D tensor'
 		if x.size(2) == self.size and x.size(3) == self.size:
 			return x
 		elif x.size(-1) == 100:
@@ -119,9 +119,11 @@ def make_encoder(
 
 	assert num_shared_layers <= num_layers and num_shared_layers > 0, \
 		f'invalid number of shared layers, received {num_shared_layers} layers'
-	return PixelEncoder(
+	
+	encoder = PixelEncoder(
 		obs_shape, feature_dim, num_layers, num_filters, num_shared_layers, normalize
 	)
+	return encoder
 
 
 class ClassifierFullGroupConvBigger(nn.Module):

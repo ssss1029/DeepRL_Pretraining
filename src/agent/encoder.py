@@ -62,7 +62,7 @@ class PixelEncoder(nn.Module):
 				groups = 3
 				k = 3
 			else:
-				groups = 1
+				groups = 3
 				k = 3
 			self.convs.append(nn.Sequential(
 				nn.Conv2d(num_filters, num_filters, kernel_size=k, stride=1, groups=groups),
