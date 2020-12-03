@@ -1,5 +1,5 @@
 {'FILENAME': 'imagenet_supervised.py',
- 'arch': 'PixelEncoderFullGroupConv',
+ 'arch': 'PixelEncoderFullGroupConvBigger',
  'batch_size': 120,
  'data': '/var/tmp/namespace/hendrycks/imagenet/',
  'epochs': 1000,

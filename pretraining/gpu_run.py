@@ -18,23 +18,34 @@ class Config:
 
     # Specifies tasks to run. It maps tmux session name to the command to run in that session.
     JOBS = {
-        "imagenet_supervised__PixelEncoderFullGroupConv" : "python3 imagenet_supervised.py \
-            --arch=PixelEncoderFullGroupConv \
-            --data=/home/saurav/DATABLAZE3/imagenet/ \
-            --save=./checkpoints/imagenet_supervised__PixelEncoderFullGroupConv \
-            --lr=1e-3 \
-            -j 10 \
-            --optimizer adamw \
-            --epochs=100",
+        # Finished on Pinwheel 9
+        # "imagenet_supervised__PixelEncoderFullGroupConv" : "python3 imagenet_supervised.py \
+        #     --arch=PixelEncoderFullGroupConv \
+        #     --data=/home/saurav/DATABLAZE3/imagenet/ \
+        #     --save=./checkpoints/imagenet_supervised__PixelEncoderFullGroupConv \
+        #     --lr=1e-3 \
+        #     -j 10 \
+        #     --optimizer adamw \
+        #     --epochs=100",
 
-        "imagenet_supervised__PixelEncoder" : "python3 imagenet_supervised.py \
-            --arch=PixelEncoder \
+        # Finished on Pinwheel 9
+        # "imagenet_supervised__PixelEncoder" : "python3 imagenet_supervised.py \
+        #     --arch=PixelEncoder \
+        #     --data=/home/saurav/DATABLAZE3/imagenet/ \
+        #     --save=./checkpoints/imagenet_supervised__PixelEncoder \
+        #     --lr=1e-3 \
+        #     -j 10 \
+        #     --optimizer adamw \
+        #     --epochs=100",
+
+        "imagenet_supervised__PixelEncoderFullGroupConvBigger" : "python3 imagenet_supervised.py \
+            --arch=PixelEncoderFullGroupConvBigger \
             --data=/home/saurav/DATABLAZE3/imagenet/ \
-            --save=./checkpoints/imagenet_supervised__PixelEncoder \
+            --save=./checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger \
             --lr=1e-3 \
             -j 10 \
             --optimizer adamw \
-            --epochs=100",
+            --epochs=500",
     }
 
     # Time to wait between putting jobs on GPUs (in seconds). This is useful because it might take time 
