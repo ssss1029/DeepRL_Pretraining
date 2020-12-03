@@ -18,12 +18,23 @@ class Config:
 
     # Specifies tasks to run. It maps tmux session name to the command to run in that session.
     JOBS = {
-        "imagenet_supervised_001" : "python3 imagenet_supervised.py \
-            --save=./checkpoints/imagenet_supervised_001 \
+        "imagenet_supervised__PixelEncoderFullGroupConv" : "python3 imagenet_supervised.py \
+            --arch=PixelEncoderFullGroupConv \
+            --data=/home/saurav/DATABLAZE3/imagenet/train \
+            --save=./checkpoints/imagenet_supervised__PixelEncoderFullGroupConv \
             --lr=1e-3 \
             -j 10 \
             --optimizer adamw \
-            --epochs=1000"
+            --epochs=1000",
+
+        "imagenet_supervised__PixelEncoder" : "python3 imagenet_supervised.py \
+            --arch=PixelEncoder \
+            --data=/home/saurav/DATABLAZE3/imagenet/train \
+            --save=./checkpoints/imagenet_supervised__PixelEncoder \
+            --lr=1e-3 \
+            -j 10 \
+            --optimizer adamw \
+            --epochs=1000",
     }
 
     # Time to wait between putting jobs on GPUs (in seconds). This is useful because it might take time 
