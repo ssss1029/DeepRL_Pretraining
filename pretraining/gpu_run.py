@@ -20,7 +20,7 @@ class Config:
     JOBS = {
         "imagenet_supervised__PixelEncoderFullGroupConv" : "python3 imagenet_supervised.py \
             --arch=PixelEncoderFullGroupConv \
-            --data=/home/saurav/DATABLAZE3/imagenet/train \
+            --data=/home/saurav/DATABLAZE3/imagenet/ \
             --save=./checkpoints/imagenet_supervised__PixelEncoderFullGroupConv \
             --lr=1e-3 \
             -j 10 \
@@ -29,7 +29,7 @@ class Config:
 
         "imagenet_supervised__PixelEncoder" : "python3 imagenet_supervised.py \
             --arch=PixelEncoder \
-            --data=/home/saurav/DATABLAZE3/imagenet/train \
+            --data=/home/saurav/DATABLAZE3/imagenet/ \
             --save=./checkpoints/imagenet_supervised__PixelEncoder \
             --lr=1e-3 \
             -j 10 \
