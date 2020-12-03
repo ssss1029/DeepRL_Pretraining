@@ -25,7 +25,7 @@ class Config:
             --lr=1e-3 \
             -j 10 \
             --optimizer adamw \
-            --epochs=1000",
+            --epochs=100",
 
         "imagenet_supervised__PixelEncoder" : "python3 imagenet_supervised.py \
             --arch=PixelEncoder \
@@ -34,7 +34,7 @@ class Config:
             --lr=1e-3 \
             -j 10 \
             --optimizer adamw \
-            --epochs=1000",
+            --epochs=100",
     }
 
     # Time to wait between putting jobs on GPUs (in seconds). This is useful because it might take time 
