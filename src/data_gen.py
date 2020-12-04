@@ -22,7 +22,7 @@ def get_env_dataset(env_name, task_name, num_data_pairs, reset_horizon):
         next_obs, _, done, _ = env.step(action)
         data = (curr_obs, action, next_obs)
         curr_obs = next_obs
-        np.save("/mnt/EnvData/{}/{}.npy".format(env_name, data_num), data)
+        np.save("/global/scratch/brianyao/DeepRL_Pretraining/pretraining/env_data/{}/{}.npy".format(env_name, data_num), data)
         i = i + 1 if not done else reset_horizon
 
 get_env_dataset(env_name, task_name, int(num_data_pairs), int(reset_horizon))
