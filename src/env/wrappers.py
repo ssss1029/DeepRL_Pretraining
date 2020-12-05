@@ -65,7 +65,8 @@ class ColorWrapper(gym.Wrapper):
 				'skybox_rgb2': [.2, .8, .2],
 				'skybox_markrgb': [.2, .8, .2]
 			}
-		if 'video_hard__' in self._mode:
+			self.reload_physics(setting_kwargs)
+		elif 'video_hard__' in self._mode:
 			# apply greenscreen to background + floor
 			setting_kwargs = {
 				'skybox_rgb': [.2, .8, .2],
@@ -75,7 +76,7 @@ class ColorWrapper(gym.Wrapper):
 				'grid_rgb2': [.2, .8, .2],
 				'grid_markrgb': [.2, .8, .2],
 			}
-		self.reload_physics(setting_kwargs)
+			self.reload_physics(setting_kwargs)
 		return self.env.reset()
 
 	def step(self, action):
