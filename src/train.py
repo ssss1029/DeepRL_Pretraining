@@ -119,6 +119,18 @@ def main(args):
 		episode_reward += reward
 		obs = next_obs
 
+		# # Save example observation
+		# if episode_step == 10:
+		# 	ims = torch.stack(torch.split(torch.from_numpy(obs), 3)).float() / 255.0
+		# 	import torchvision
+		# 	torchvision.utils.save_image(ims, "ex_obs_10.png")
+
+		# if episode_step == 100:
+		# 	ims = torch.stack(torch.split(torch.from_numpy(obs), 3)).float() / 255.0
+		# 	import torchvision
+		# 	torchvision.utils.save_image(ims, "ex_obs_100.png")
+		# 	import pdb; pdb.set_trace()
+
 		episode_step += 1
 
 
