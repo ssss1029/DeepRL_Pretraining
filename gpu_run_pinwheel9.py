@@ -26,11 +26,59 @@ class Config:
         #####################################################################################
         #### Pinwheel 9
         #####################################################################################
-        "walker_walk_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        # "walker_walk_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        #         --domain_name walker \
+        #         --task_name walk \
+        #         --action_repeat 4 \
+        #         --mode train \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 2 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/walker_walk/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+        #         --save_model",
+        
+        # "cheetah_run_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        #         --domain_name cheetah \
+        #         --task_name run \
+        #         --action_repeat 4 \
+        #         --mode train \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 2 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/cheetah_run/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+        #         --save_model",
+        
+        # "reacher_easy_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        #         --domain_name reacher \
+        #         --task_name easy \
+        #         --action_repeat 4 \
+        #         --mode train \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 2 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/reacher_easy/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+        #         --save_model",
+
+        "walker_walk_noss_no_pretraining_PixelEncoderFullGroupConvBigger_video_hard__video0_seed0" : "python3 src/train.py \
                 --domain_name walker \
                 --task_name walk \
                 --action_repeat 4 \
-                --mode train \
+                --mode video_hard__video0 \
                 --num_shared_layers 8 \
                 --num_filters 288 \
                 --seed 2 \
@@ -39,14 +87,14 @@ class Config:
                 --critic_lr 1e-4 \
                 --replay_buffer_size 100000 \
                 --train_steps 100000 \
-                --work_dir logs/walker_walk/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+                --work_dir logs/walker_walk/video_hard__video0/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
                 --save_model",
         
-        "cheetah_run_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        "cheetah_run_noss_no_pretraining_PixelEncoderFullGroupConvBigger_video_hard__video1_seed0" : "python3 src/train.py \
                 --domain_name cheetah \
                 --task_name run \
                 --action_repeat 4 \
-                --mode train \
+                --mode video_hard__video1 \
                 --num_shared_layers 8 \
                 --num_filters 288 \
                 --seed 2 \
@@ -55,14 +103,14 @@ class Config:
                 --critic_lr 1e-4 \
                 --replay_buffer_size 100000 \
                 --train_steps 100000 \
-                --work_dir logs/cheetah_run/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+                --work_dir logs/cheetah_run/video_hard__video1/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
                 --save_model",
         
-        "reacher_easy_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
+        "reacher_easy_noss_no_pretraining_PixelEncoderFullGroupConvBigger_video_hard__video99_seed0" : "python3 src/train.py \
                 --domain_name reacher \
                 --task_name easy \
                 --action_repeat 4 \
-                --mode train \
+                --mode video_hard__video99 \
                 --num_shared_layers 8 \
                 --num_filters 288 \
                 --seed 2 \
@@ -71,10 +119,8 @@ class Config:
                 --critic_lr 1e-4 \
                 --replay_buffer_size 100000 \
                 --train_steps 100000 \
-                --work_dir logs/reacher_easy/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
+                --work_dir logs/reacher_easy/video_hard__video99/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
                 --save_model",
-
-
     }
 
     # Time to wait between putting jobs on GPUs (in seconds). This is useful because it might take time 
