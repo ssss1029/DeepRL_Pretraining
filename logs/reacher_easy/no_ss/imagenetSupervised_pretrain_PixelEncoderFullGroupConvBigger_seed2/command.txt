@@ -14,8 +14,8 @@
  'critic_tau': 0.01,
  'curl_latent_dim': 128,
  'discount': 0.99,
- 'domain_name': 'cheetah',
- 'encoder_checkpoint': None,
+ 'domain_name': 'reacher',
+ 'encoder_checkpoint': '/home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar',
  'encoder_feature_dim': 100,
  'encoder_lr': 0.0001,
  'encoder_tau': 0.05,
@@ -40,9 +40,9 @@
  'seed': 2,
  'ss_lr': 0.001,
  'ss_update_freq': 2,
- 'task_name': 'run',
+ 'task_name': 'easy',
  'train_steps': 100000,
  'use_curl': False,
  'use_inv': False,
  'use_rot': False,
- 'work_dir': 'logs/cheetah_run/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0'}
+ 'work_dir': 'logs/reacher_easy/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0'}
