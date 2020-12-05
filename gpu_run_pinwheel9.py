@@ -24,7 +24,7 @@ class Config:
     JOBS = {
         
         #####################################################################################
-        #### Pinwheel 9
+        #### No Pretraining, PixelEncoderFullGroupConvBigger, clean environment
         #####################################################################################
         # "walker_walk_noss_no_pretraining_PixelEncoderFullGroupConvBigger_seed0" : "python3 src/train.py \
         #         --domain_name walker \
@@ -74,6 +74,9 @@ class Config:
         #         --work_dir logs/reacher_easy/no_ss/no_pretraining_PixelEncoderFullGroupConvBigger_seed0 \
         #         --save_model",
 
+        #####################################################################################
+        #### No Pretraining, PixelEncoderFullGroupConvBigger, video_hard environment
+        #####################################################################################
         "walker_walk_noss_no_pretraining_PixelEncoderFullGroupConvBigger_video_hard__video0_seed0" : "python3 src/train.py \
                 --domain_name walker \
                 --task_name walk \
