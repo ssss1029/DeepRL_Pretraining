@@ -121,7 +121,7 @@ def make_encoder(
 	)
 
 	if encoder_checkpoint is not None:
-		cleaned_checkpoint = get_state_dict_saurav(encoder_checkpoint)
+		cleaned_checkpoint = get_state_dict_sam(encoder_checkpoint)
 
 		# No strict to ensure we dont't error for not loading fc and ln
 		encoder.load_state_dict(cleaned_checkpoint, strict=False)
@@ -147,7 +147,7 @@ def get_state_dict_saurav(encoder_checkpoint: str):
 
 def get_state_dict_sam(encoder_checkpoint: str):
 	"""
-	Get the state dict from Sam's original saved checkpoints
+	Get the state dict from Sam's original saved checkpoints (should also work for Brian's)
 	"""
 	cleaned_checkpoint = dict()
 	exclude_keys = [
