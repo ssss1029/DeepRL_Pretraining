@@ -99,7 +99,12 @@ class Actor(nn.Module):
             nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
             nn.Linear(hidden_dim, 2 * action_shape[0])
         )
-        self.apply(weight_init)
+
+        if not encoder_checkpoint:
+            print("ACTOR: RANDOMLY INITIALIZING WEIGHTS")
+            self.apply(weight_init)
+        else:
+            print("ACTOR: SKIPPING RANDOMLY INITIALIZING WEIGHTS")
 
     def forward(
         self, obs, compute_pi=True, compute_log_pi=True, detach_encoder=False
@@ -228,7 +233,12 @@ class Critic(nn.Module):
         self.Q2 = QFunction(
             self.encoder.feature_dim, action_shape[0], hidden_dim
         )
-        self.apply(weight_init)
+        
+        if not encoder_checkpoint:
+            print("CRITIC: RANDOMLY INITIALIZING WEIGHTS")
+            self.apply(weight_init)
+        else:
+            print("CRITIC: SKIPPING RANDOMLY INITIALIZING WEIGHTS")
 
     def forward(self, obs, action, detach_encoder=False):
         # detach_encoder allows to stop gradient propogation to encoder

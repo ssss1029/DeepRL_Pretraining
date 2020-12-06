@@ -62,7 +62,7 @@ class PixelEncoder(nn.Module):
 				groups = 3
 				k = 3
 			else:
-				groups = 1
+				groups = 3
 				k = 3
 			self.convs.append(nn.Sequential(
 				nn.Conv2d(num_filters, num_filters, kernel_size=k, stride=1, groups=groups),
@@ -75,6 +75,7 @@ class PixelEncoder(nn.Module):
 		# self.ln = nn.LayerNorm(self.feature_dim)
 
 	def forward_conv(self, obs, detach=False):
+		B, C, H, W = obs.shape
 		obs = self.preprocess(obs)
 		conv = torch.relu(self.convs[0](obs))
 
@@ -83,8 +84,10 @@ class PixelEncoder(nn.Module):
 			if i == self.num_shared_layers-1 and detach:
 				conv = conv.detach()
 
-		h = conv.view(conv.size(0), -1)
-		return h
+		split = torch.split(conv, conv.shape[1] // 3, dim=1)
+		split = torch.stack(split, dim=0)
+		split = split.reshape(3, B, -1)
+		return split
 
 	def forward(self, obs, detach=False):
 		h = self.forward_conv(obs, detach)
@@ -121,16 +124,16 @@ def make_encoder(
 	)
 
 
-class Classifier(nn.Module):
+class ClassifierFullGroupConv(nn.Module):
 	"""
-	Classifier wraps PixelEncoder
+	ClassifierFullGroupConv wraps PixelEncoder
 	"""
 
 	def __init__(self, num_classes):
-		super(Classifier, self).__init__()
+		super(ClassifierFullGroupConv, self).__init__()
 
 		self.num_classes = num_classes
-		enc_out_dim = 21 * 21 * 96
+		enc_out_dim = 21 * 21 * 96 // 3
 		self.encoder = make_encoder(
 			obs_shape=(9, 84, 84),
 			feature_dim=enc_out_dim,
@@ -176,10 +179,11 @@ class Classifier(nn.Module):
 		# print(x.shape)
 
 		h = self.encoder(x)
+		h1, h2, h3 = h[0], h[1], h[2]
 
-		y1s = self.head1(h) # Channel 0-2 predictions
-		y2s = self.head2(h) # Channel 3-5 predictions
-		y3s = self.head3(h) # Channel 6-8 predictions
+		y1s = self.head1(h1) # Channel 0-2 predictions
+		y2s = self.head2(h2) # Channel 3-5 predictions
+		y3s = self.head3(h3) # Channel 6-8 predictions
 
 		preds = torch.cat([y1s, y2s, y3s], dim=0)
 

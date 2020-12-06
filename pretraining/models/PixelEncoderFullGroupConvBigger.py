@@ -20,7 +20,7 @@ class CenterCrop(nn.Module):
 		self.size = size
 
 	def forward(self, x):
-		assert x.ndim == 4, 'input must be a 4D tensor'
+		assert len(x.shape) == 4, 'input must be a 4D tensor'
 		if x.size(2) == self.size and x.size(3) == self.size:
 			return x
 		elif x.size(-1) == 100:
@@ -62,7 +62,7 @@ class PixelEncoder(nn.Module):
 				groups = 3
 				k = 3
 			else:
-				groups = 1
+				groups = 3
 				k = 3
 			self.convs.append(nn.Sequential(
 				nn.Conv2d(num_filters, num_filters, kernel_size=k, stride=1, groups=groups),
@@ -75,6 +75,7 @@ class PixelEncoder(nn.Module):
 		# self.ln = nn.LayerNorm(self.feature_dim)
 
 	def forward_conv(self, obs, detach=False):
+		B, C, H, W = obs.shape
 		obs = self.preprocess(obs)
 		conv = torch.relu(self.convs[0](obs))
 
@@ -83,8 +84,10 @@ class PixelEncoder(nn.Module):
 			if i == self.num_shared_layers-1 and detach:
 				conv = conv.detach()
 
-		h = conv.view(conv.size(0), -1)
-		return h
+		split = torch.split(conv, conv.shape[1] // 3, dim=1)
+		split = torch.stack(split, dim=0)
+		split = split.reshape(3, B, -1)
+		return split
 
 	def forward(self, obs, detach=False):
 		h = self.forward_conv(obs, detach)
@@ -116,26 +119,29 @@ def make_encoder(
 
 	assert num_shared_layers <= num_layers and num_shared_layers > 0, \
 		f'invalid number of shared layers, received {num_shared_layers} layers'
-	return PixelEncoder(
+	
+	encoder = PixelEncoder(
 		obs_shape, feature_dim, num_layers, num_filters, num_shared_layers, normalize
 	)
+	return encoder
 
 
-class Classifier(nn.Module):
+class ClassifierFullGroupConvBigger(nn.Module):
 	"""
-	Classifier wraps PixelEncoder
+	ClassifierFullGroupConvBigger wraps PixelEncoder
 	"""
 
 	def __init__(self, num_classes):
-		super(Classifier, self).__init__()
+		super(ClassifierFullGroupConvBigger, self).__init__()
 
 		self.num_classes = num_classes
-		enc_out_dim = 21 * 21 * 96
+		hidden_channels = 288
+		enc_out_dim = 21 * 21 * hidden_channels // 3
 		self.encoder = make_encoder(
 			obs_shape=(9, 84, 84),
 			feature_dim=enc_out_dim,
 			num_layers=11,
-			num_filters=96,
+			num_filters=hidden_channels,
 			num_shared_layers=8,
 			normalize=False
 		)
@@ -176,10 +182,11 @@ class Classifier(nn.Module):
 		# print(x.shape)
 
 		h = self.encoder(x)
+		h1, h2, h3 = h[0], h[1], h[2]
 
-		y1s = self.head1(h) # Channel 0-2 predictions
-		y2s = self.head2(h) # Channel 3-5 predictions
-		y3s = self.head3(h) # Channel 6-8 predictions
+		y1s = self.head1(h1) # Channel 0-2 predictions
+		y2s = self.head2(h2) # Channel 3-5 predictions
+		y3s = self.head3(h3) # Channel 6-8 predictions
 
 		preds = torch.cat([y1s, y2s, y3s], dim=0)
 

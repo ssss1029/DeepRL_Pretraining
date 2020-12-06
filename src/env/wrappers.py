@@ -58,13 +58,25 @@ class ColorWrapper(gym.Wrapper):
 		self.time_step = 0
 		if 'color' in self._mode:
 			self.randomize()
-		if 'video' in self._mode:
-			# apply greenscreen
-			self.reload_physics(
-				{'skybox_rgb': [.2, .8, .2],
+		elif 'video__' in self._mode:
+			# apply greenscreen to just the background
+			setting_kwargs = {
+				'skybox_rgb': [.2, .8, .2],
 				'skybox_rgb2': [.2, .8, .2],
 				'skybox_markrgb': [.2, .8, .2]
-			})
+			}
+			self.reload_physics(setting_kwargs)
+		elif 'video_hard__' in self._mode:
+			# apply greenscreen to background + floor
+			setting_kwargs = {
+				'skybox_rgb': [.2, .8, .2],
+				'skybox_rgb2': [.2, .8, .2],
+				'skybox_markrgb': [.2, .8, .2],
+				'grid_rgb1': [.2, .8, .2],
+				'grid_rgb2': [.2, .8, .2],
+				'grid_markrgb': [.2, .8, .2],
+			}
+			self.reload_physics(setting_kwargs)
 		return self.env.reset()
 
 	def step(self, action):
@@ -222,11 +234,15 @@ class GreenScreen(gym.Wrapper):
 	def __init__(self, env, mode):
 		gym.Wrapper.__init__(self, env)
 		self._mode = mode
-		if 'video' in mode:
-			self._video = mode
-			if not self._video.endswith('.mp4'):
-				self._video += '.mp4'
+		if 'video__' in mode:
+			# Get video name
+			self._video = mode[7:] + ".mp4"
 			self._video = os.path.join('src/env/data', self._video)
+			self._data = self._load_video(self._video)
+		elif 'video_hard__' in mode:
+			# Get video name
+			self._video = mode[12:] + ".mp4"
+			self._video = os.path.join('src/env/data_video_hard', self._video)
 			self._data = self._load_video(self._video)
 		else:
 			self._video = None
@@ -234,6 +250,7 @@ class GreenScreen(gym.Wrapper):
 
 	def _load_video(self, video):
 		"""Load video from provided filepath and return as numpy array"""
+		print("LOADING", video)
 		cap = cv2.VideoCapture(video)
 		assert cap.get(cv2.CAP_PROP_FRAME_WIDTH) >= 100, 'width must be at least 100 pixels'
 		assert cap.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 100, 'height must be at least 100 pixels'
