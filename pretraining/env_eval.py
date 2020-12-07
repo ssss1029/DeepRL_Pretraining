@@ -1,22 +1,25 @@
 # IMPORTS
+import random
+import sys
+
+import numpy as np
+from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from tqdm import tqdm
-import numpy as np
+
 from torch.utils.data import DataLoader, Dataset
 
-ENV = 'walker'
-env_to_action_dim = {
+# CONSTANTS
+DATA_ROOT = "/global/scratch/brianyao/DeepRL_Pretraining/pretraining/env_data/{}/"
+DATASET_SIZE = 200000
+ENV_TO_ACTION_DIM = {
 	'walker' : 6,
 	'reacher' : 6,
 	'cheetah' : 6,
 }
+OUT_DIM = {2: 39, 4: 35, 6: 31, 8: 27, 10: 23, 11: 21, 12: 19}
 
-DATASET_SIZE = 200000
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("DEVICE: {}".format(device))
 # TRANSFORMS
 class CenterCrop(nn.Module):
 	"""Center-crop if observation is not already cropped"""
@@ -26,7 +29,7 @@ class CenterCrop(nn.Module):
 		self.size = size
 
 	def forward(self, x):
-		assert x.ndim == 4, 'input must be a 4D tensor'
+		assert len(x.shape) == 4, 'input must be a 4D tensor'
 		if x.size(2) == self.size and x.size(3) == self.size:
 			return x
 		elif x.size(-1) == 100:
@@ -41,7 +44,6 @@ class NormalizeImg(nn.Module):
 		return x/255.
 
 # MODEL
-OUT_DIM = {2: 39, 4: 35, 6: 31, 8: 27, 10: 23, 11: 21, 12: 19}
 class PixelEncoder(nn.Module):
 	"""Convolutional encoder of pixel observations"""
 	def __init__(self, obs_shape, action_dim, num_layers=11, num_filters=90, num_shared_layers=8, normalize=False):
@@ -104,12 +106,7 @@ class PixelEncoder(nn.Module):
 		h_out = self.output(h_fc2)
 		return h_out
 
-
-model = PixelEncoder((9,100,100), env_to_action_dim[ENV]).to(device)
-
-# DATA STUFF
-data_dir = '/data/sauravkadavath/DeepRL_Pretraining_data/{}/'.format(ENV)
-
+# DATA
 class EnvDataset(Dataset):
 	"""Env dataset."""
 
@@ -131,29 +128,38 @@ class EnvDataset(Dataset):
 		ends = torch.from_numpy(data[2].astype('float32'))
 		return (starts, actions, ends)
 
-env_dataset_test = EnvDataset(data_dir, train=False)
-test_loader = DataLoader(env_dataset_test, batch_size=128, shuffle=False, num_workers=4)
+if __name__ == '__main__':
+	# Setup
+	assert(len(sys.argv) == 3)
+	env = sys.argv[1]
+	checkpoint_path = sys.argv[2]
 
-checkpoint = torch.load("/accounts/projects/jsteinhardt/sauravkadavath/DeepRL_Pretraining/pretraining/checkpoints/walker/model_20_0.12102441042862491_0.1676123877748465")
-model.load_state_dict(checkpoint)
+	# Data
+	data_dir = DATA_ROOT.format(env)
+	env_dataset_test = EnvDataset(data_dir, train=False)
+	test_loader = DataLoader(env_dataset_test, batch_size=128, shuffle=False, num_workers=4)
 
-print("Starting Testing")
-import random
-model = model.eval()
-with torch.no_grad():
-    for j, data in enumerate(tqdm(test_loader)):
-        starts = data[0].to(device)
-        actions = data[1].to(device)
-        ends = data[2].to(device)
-        outputs = model(starts, ends)
+	# Device / Model
+	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	print("DEVICE: {}".format(device))
+	model = PixelEncoder((9,100,100), ENV_TO_ACTION_DIM[env]).to(device)
+	checkpoint = torch.load(checkpoint_path)
+	model.load_state_dict(checkpoint)
 
-        for j in range(5):
-            _j = random.choice(list(range(starts.shape[0])))
-            print(actions[_j])
-            print(outputs[_j])
-            print(abs(outputs[_j] - actions[_j]))
-            print(torch.mean((outputs[_j] - actions[_j]) ** 2))
-            print()
-        import pdb;pdb.set_trace()
-        break
+	# Testing
+	print("Starting Testing")
+	model = model.eval()
+	with torch.no_grad():
+	    for j, data in enumerate(tqdm(test_loader)):
+	        starts = data[0].to(device)
+	        actions = data[1].to(device)
+	        ends = data[2].to(device)
+	        outputs = model(starts, ends)
 
+	        for j in range(5):
+	            _j = random.choice(list(range(starts.shape[0])))
+	            print(actions[_j])
+	            print(outputs[_j])
+	            print(abs(outputs[_j] - actions[_j]))
+	            print(torch.mean((outputs[_j] - actions[_j]) ** 2))
+	            print()

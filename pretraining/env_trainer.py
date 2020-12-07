@@ -9,7 +9,7 @@ import sys
 
 assert len(sys.argv) == 2, "Specify environment."
 ENV = sys.argv[1]
-assert ENV in ['walker', 'cheetah', 'reacher'], "Invalid envrionment."
+assert ENV in ['walker', 'cheetah', 'reacher'], "Invalid environment."
 
 env_to_action_dim = {
 	'walker' : 6,
@@ -30,7 +30,7 @@ class CenterCrop(nn.Module):
 		self.size = size
 
 	def forward(self, x):
-		assert x.ndim == 4, 'input must be a 4D tensor'
+		assert len(x.shape) == 4, 'input must be a 4D tensor'
 		if x.size(2) == self.size and x.size(3) == self.size:
 			return x
 		elif x.size(-1) == 100:
@@ -112,7 +112,7 @@ class PixelEncoder(nn.Module):
 model = PixelEncoder((9,100,100), env_to_action_dim[ENV]).to(device)
 
 # DATA STUFF
-data_dir = '/mnt/EnvData/{}/'.format(ENV)
+data_dir = '/global/scratch/brianyao/DeepRL_Pretraining/pretraining/env_data/{}/'.format(ENV)
 
 class EnvDataset(Dataset):
 	"""Env dataset."""
@@ -181,7 +181,7 @@ for epoch in range(1, epochs + 1):	# loop over the dataset multiple times
 	print('epoch: {}\ttrain loss: {}\ttest loss: {}'.format(epoch, running_loss / i, running_test_loss / j))
 
 	if epoch % 5 == 0:
-		torch.save(model.state_dict(), "/home/saurav/sam/DeepRL_Pretraining/pretraining/ik_checkpoints/{}/model_{}_{}_{}.pth".format(ENV, epoch, running_loss / i, running_test_loss / j))
+		torch.save(model.state_dict(), "/global/scratch/brianyao/DeepRL_Pretraining/pretraining/ik_checkpoints/{}/model_{}_{}_{}.pth".format(ENV, epoch, running_loss / i, running_test_loss / j))
 
 print('Finished Training!')
 
