@@ -77,59 +77,59 @@ class Config:
                 --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
                 --save_model",
 
-        #####################################################################################
-        #### 3 Pretrained agents with PixelEncoderFullGroupConvBigger on video_hard env
-        #####################################################################################
-        "walker_walk_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video99_seed22" : "python3 src/train.py \
-                --domain_name walker \
-                --task_name walk \
-                --action_repeat 4 \
-                --mode video_hard__video99 \
-                --num_shared_layers 8 \
-                --num_filters 288 \
-                --seed 22 \
-                --encoder_lr 1e-4 \
-                --actor_lr 1e-4 \
-                --critic_lr 1e-4 \
-                --replay_buffer_size 100000 \
-                --train_steps 100000 \
-                --work_dir logs/walker_walk/video_hard__video99/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
-                --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
-                --save_model",
+        # #####################################################################################
+        # #### 3 Pretrained agents with PixelEncoderFullGroupConvBigger on video_hard env
+        # #####################################################################################
+        # "walker_walk_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video99_seed22" : "python3 src/train.py \
+        #         --domain_name walker \
+        #         --task_name walk \
+        #         --action_repeat 4 \
+        #         --mode video_hard__video99 \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 22 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/walker_walk/video_hard__video99/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
+        #         --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
+        #         --save_model",
         
-        "cheetah_run_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video0_seed22" : "python3 src/train.py \
-                --domain_name cheetah \
-                --task_name run \
-                --action_repeat 4 \
-                --mode video_hard__video0 \
-                --num_shared_layers 8 \
-                --num_filters 288 \
-                --seed 22 \
-                --encoder_lr 1e-4 \
-                --actor_lr 1e-4 \
-                --critic_lr 1e-4 \
-                --replay_buffer_size 100000 \
-                --train_steps 100000 \
-                --work_dir logs/cheetah_run/video_hard__video0/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
-                --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
-                --save_model",
+        # "cheetah_run_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video0_seed22" : "python3 src/train.py \
+        #         --domain_name cheetah \
+        #         --task_name run \
+        #         --action_repeat 4 \
+        #         --mode video_hard__video0 \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 22 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/cheetah_run/video_hard__video0/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
+        #         --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
+        #         --save_model",
         
-        "reacher_easy_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video1_seed22" : "python3 src/train.py \
-                --domain_name reacher \
-                --task_name easy \
-                --action_repeat 4 \
-                --mode video_hard__video1 \
-                --num_shared_layers 8 \
-                --num_filters 288 \
-                --seed 22 \
-                --encoder_lr 1e-4 \
-                --actor_lr 1e-4 \
-                --critic_lr 1e-4 \
-                --replay_buffer_size 100000 \
-                --train_steps 100000 \
-                --work_dir logs/reacher_easy/video_hard__video1/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
-                --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
-                --save_model",
+        # "reacher_easy_noss_imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_video_hard__video1_seed22" : "python3 src/train.py \
+        #         --domain_name reacher \
+        #         --task_name easy \
+        #         --action_repeat 4 \
+        #         --mode video_hard__video1 \
+        #         --num_shared_layers 8 \
+        #         --num_filters 288 \
+        #         --seed 22 \
+        #         --encoder_lr 1e-4 \
+        #         --actor_lr 1e-4 \
+        #         --critic_lr 1e-4 \
+        #         --replay_buffer_size 100000 \
+        #         --train_steps 100000 \
+        #         --work_dir logs/reacher_easy/video_hard__video1/imagenetSupervised_pretrain_PixelEncoderFullGroupConvBigger_seed22 \
+        #         --encoder_checkpoint /home/saurav/saurav/DeepRL_Pretraining/pretraining/checkpoints/imagenet_supervised__PixelEncoderFullGroupConvBigger/checkpoint_epoch412.pth.tar \
+        #         --save_model",
 
 
     }
