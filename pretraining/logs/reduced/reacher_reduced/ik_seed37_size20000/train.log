@@ -1,0 +1,4 @@
+{"episode_reward": 0.0, "episode": 1.0, "duration": 14.756279230117798, "step": 250}
+{"episode_reward": 31.0, "episode": 2.0, "duration": 0.6207292079925537, "step": 500}
+{"episode_reward": 41.0, "episode": 3.0, "duration": 0.6047396659851074, "step": 750}
+{"episode_reward": 38.0, "episode": 4.0, "duration": 0.5971052646636963, "step": 1000}
