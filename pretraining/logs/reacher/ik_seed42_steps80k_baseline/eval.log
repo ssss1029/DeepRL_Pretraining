@@ -1,9 +1,0 @@
-{"episode": 0.0, "episode_reward": 400.0, "step": 0}
-{"episode": 40.0, "episode_reward": 42.3, "step": 10000}
-{"episode": 80.0, "episode_reward": 149.6, "step": 20000}
-{"episode": 120.0, "episode_reward": 10.5, "step": 30000}
-{"episode": 160.0, "episode_reward": 9.0, "step": 40000}
-{"episode": 200.0, "episode_reward": 134.6, "step": 50000}
-{"episode": 240.0, "episode_reward": 194.6, "step": 60000}
-{"episode": 280.0, "episode_reward": 296.3, "step": 70000}
-{"episode": 320.0, "episode_reward": 213.5, "step": 80000}
